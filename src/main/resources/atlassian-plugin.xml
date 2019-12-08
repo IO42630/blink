@@ -1,0 +1,36 @@
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+        <param name="plugin-icon">images/io42630.png</param>
+        <param name="plugin-logo">images/io42630.png</param>
+    </plugin-info>
+
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="i18n" location="blink"/>
+
+    <!-- add our web resources -->
+    <web-resource key="blink-resources" name="blink Web Resources">
+
+
+        <resource type="download" name="blink.css" location="/css/blink.css"/>
+        <resource type="download" name="blink.js" location="/js/blink.js"/>
+        <resource type="download" name="images/" location="/images"/>
+
+        <context>blink</context>
+    </web-resource>
+    <servlet name="BLink" i18n-name-key="blink.name" key="core" class="com.olexyn.blink.Core">
+        <description key="blink.description">The BLink Plugin</description>
+        <url-pattern>/blink</url-pattern>
+    </servlet>
+    <web-section name="Connect" i18n-name-key="connect.name" key="connect" location="opsbar-operations" weight="1000">
+        <description key="connect.description">The Connect Section</description>
+        <label key="connect.label"/>
+    </web-section>
+    <web-item name="BLink-Item" i18n-name-key="blink.name" key="blink-item" section="connect" weight="1000">
+        <description key="connect-ak.description">BLink</description>
+        <label key="BLink"></label>
+        <link linkId="blink-link">http://localhost:2990/jira/plugins/servlet/blink</link>
+    </web-item>
+</atlassian-plugin>

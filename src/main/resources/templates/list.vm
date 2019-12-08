@@ -1,0 +1,238 @@
+<html>
+<head>
+    <title>BLink</title>
+    <meta name="decorator" content="atl.general">
+    <style>
+    .flex-container {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.flex-container > div {
+  margin: 10px;
+}
+
+.th-checkbox {
+    width: 20px;
+}
+
+.th-type {
+    width: 320px;
+}.th-key {
+     width: 160px;
+ }
+
+
+.th-summary {
+    width: 320px;
+
+.th-status {
+    width: 160px;
+}
+
+
+
+    </style>
+    <script>
+
+
+
+        function close_window() {
+            if (confirm("Close Window?")) {
+                window.close();
+            }
+        }
+
+        function check_status() {
+            var checkboxes = document.getElementsByClassName("checkbox");
+            var checkboxes_state = "";
+            for (var i = 0; i < checkboxes.length; i++) {
+                var element = checkboxes[i].getAttribute("name");
+                var is_checked = checkboxes[i].checked;
+                checkboxes_state = checkboxes_state + element + "=is=" + is_checked + "\n";
+            }
+            document.getElementById('checkboxes_state').value = checkboxes_state;
+        }
+        
+        function select_all(){
+            var all = document.getElementById("select-all").checked;
+            var checkboxes = document.getElementsByClassName("checkbox");
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = all;
+            }
+        }
+
+        
+
+    </script>
+</head>
+<body class="page-type-admin">
+<div class="content-container">
+##$webResourceManager.requireResourcesForContext("padsearch")
+
+    #if ($errors && $errors.size()>0)
+        <div class="aui-message error shadowed">
+            #foreach($error in $errors)
+                <p class="title">
+                    <span class="aui-icon icon-error"></span>
+                    <strong>$error</strong>
+                </p>
+            #end
+        </div>
+        <!-- .aui-message -->
+    #end
+<div class="flex-container">
+    <div>
+    <form class="aui">
+        <div class="field-group">
+            <label for="root-issue">Ursprungsvorgang</label>
+            #if ($root-issue)
+            <input class="text" type="text" id="root-issue" name="root-issue" title="Vorgang" value=$root-issue>
+            #else
+            <input class="text" type="text" id="root-issue" name="root-issue" title="Vorgang">
+            #end
+        </div>
+        <div class="field-group">
+            <label for="find-link-type">Verknüpfung</label>
+            <select class="select" id="find-link-type" name="find-link-type">
+                <option>Alle</option>
+                #foreach ($link in $links)
+                    <option>$link</option>
+                #end
+            </select>
+        </div>
+        <div class="field-group">
+            <label for="recursion">Rekursion</label>
+            <select class="select" id="recursion" name="recursion">
+                <option>0</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+            </select>
+        </div>
+        <div class="buttons-container">
+            <div class="buttons">
+                <input type="hidden" name="action" value="search">
+                <button class="aui-button" type="submit" value="Suchen">Suchen</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div>
+    <form class="aui">
+        <div class="field-group">
+            <label for="target-issue">Zielvorgang</label>
+            #if ($target-issue)
+            <input class="text" type="text" id="target-issue" name="target-issue" title="Zielvorgang" value=$target-issue>
+            #else
+            <input class="text" type="text" id="target-issue" name="target-issue" title="Zielvorgang">
+            #end
+        </div>
+        <div class="field-group">
+            <label for="connect-link-type">Verknüpfung</label>
+            <select class="select" id="connect-link-type" name="connect-link-type">
+                <option></option>
+                #foreach ($link in $links)
+                    <option>$link</option>
+                #end
+            </select>
+        </div>
+
+        <div class="buttons-container">
+            <div class="buttons">
+                <form method="get" action="core">
+                    <input type="hidden" name="action" value="link">
+                    <input type="hidden" name="checkboxes_state" id="checkboxes_state" value="">
+                    <button class="aui-button" type="submit" onclick="check_status()" value="">Verknüpfen</button>
+                </form>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+
+
+    #if ($issues && $issues.size() > 0)
+        <div class="issues">
+            <table class="aui">
+                <thead>
+                <tr>
+                    <th class="th-checkbox"><input class="checkbox" type="checkbox" name="select-all" id="select-all" onclick="select_all()"></th>
+                            <th class="th-type">Typ</th>
+                            <th class="th-key">Key</th>
+                            <th class="th-summary">Zusammenfassung</th>
+                            <th class="th-status">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                    #foreach( $issue in $issues )
+                    <tr>
+                    ##<td><input type="checkbox" name="$issue.getKey()"></td>
+                        <td>
+                            <div class="checkbox">
+                                <input class="checkbox" type="checkbox" name="$issue.getKey()" id="$issue.getKey()">
+                            </div>
+                        </td>
+                        <td><img src="http://localhost:2990/jira/$issue.getIssueType().getIconUrlHtml()"</img> $issue.getIssueType().getName()</td>
+                        <td>$issue.getKey()</td>
+                        <td>$issue.getSummary()</td>
+                        <td><img src="http://localhost:2990/jira/$issue.getStatus().getIconUrlHtml()"</img> $issue.getStatus().getName()</td>
+                    </tr>
+                    #end
+                </tbody>
+            </table>
+        </div>
+        #else
+                <div class="issues">
+                    <table class="aui">
+                        <thead>
+                        <tr>
+                            <th class="th-checkbox"><input class="checkbox" type="checkbox" name="select-all" id="select-all"></th>
+                            <th class="th-type">Typ</th>
+                            <th class="th-key">Key</th>
+                            <th class="th-summary">Zusammenfassung</th>
+                            <th class="th-status">Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            <td>...</td>
+                            <td> </td>
+                            <td> </td>
+                            </tr>
+                            <tr>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            <td>...</td>
+                            <td> </td>
+                            <td> </td>
+                            </tr>
+                            <tr>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            <td>...</td>
+                            <td> </td>
+                            <td> </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                         </div>
+    #end
+
+
+
+</div>
+</div>
+</body>
+</html>
+
